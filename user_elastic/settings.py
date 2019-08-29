@@ -120,3 +120,7 @@ STATIC_URL = '/static/'
 # Auth customizing
 # https://docs.djangoproject.com/en/2.2/topics/auth/customizing/
 AUTH_USER_MODEL = 'users.User'
+
+# Celery
+# https://docs.celeryproject.org/en/latest/
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')
