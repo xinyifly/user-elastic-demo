@@ -124,3 +124,7 @@ AUTH_USER_MODEL = 'users.User'
 # Celery
 # https://docs.celeryproject.org/en/latest/
 CELERY_BROKER_URL = env('CELERY_BROKER_URL')
+
+# Elasticsearch
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html
+ELASTIC_URL = env('ELASTIC_URL')

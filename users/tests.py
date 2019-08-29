@@ -1,15 +1,32 @@
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
+from unittest import mock
 
 from .factories import UserFactory
 from .models import User
+from .tasks import save_user_to_elastic
 
 
 class UserTest(TestCase):
     def test_create(self):
         UserFactory().save()
         self.assertTrue(User.objects.exists())
+
+    @mock.patch('requests.put')
+    def test_save_to_elastic(self, mock_put):
+        user = UserFactory()
+        user.save()
+        save_user_to_elastic({
+            'id': user.id,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'address': user.address,
+            'birthday': user.birthday.isoformat(),
+            'description': user.description,
+        })
+        mock_put.assert_called_once()
 
 
 class UserAPITest(APITestCase):
