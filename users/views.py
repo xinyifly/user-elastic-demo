@@ -35,6 +35,9 @@ class SearchUserViewSet(viewsets.ViewSet):
         response = requests.post(settings.ELASTIC_URL + '/users/_search',
                                  json=search_body)
 
+        if response.status_code != status.HTTP_200_OK:
+            return Response(None, status.HTTP_503_SERVICE_UNAVAILABLE)
+
         hits = response.json()['hits']['hits']
         users = [hit['_source'] for hit in hits]
 
