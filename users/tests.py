@@ -52,6 +52,7 @@ class UserAPITest(APITestCase):
 
     @mock.patch('requests.post')
     def test_search(self, mock_post):
+        mock_post.return_value.status_code = status.HTTP_200_OK
         response = self.client.get('/search/')
         mock_post.assert_called_once()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
