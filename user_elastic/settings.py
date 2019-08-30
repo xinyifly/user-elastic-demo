@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 import environ
+from kombu import Connection, Exchange, Queue
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -124,6 +125,16 @@ AUTH_USER_MODEL = 'users.User'
 # Celery
 # https://docs.celeryproject.org/en/latest/
 CELERY_BROKER_URL = env('CELERY_BROKER_URL')
+with Connection(CELERY_BROKER_URL) as conn:
+    Exchange('dlx_celery')(conn).declare()
+    Queue('dlx_celery', exchange='dlx_celery',
+          routing_key='celery')(conn).declare()
+
+CELERY_TASK_QUEUES = (Queue('celery',
+                            queue_arguments={
+                                'x-dead-letter-exchange': 'dlx_celery',
+                                'x-dead-letter-routing-key': 'celery'
+                            }), )
 
 # Elasticsearch
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html
