@@ -49,3 +49,10 @@ class UserAPITest(APITestCase):
             })
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(User.objects.exists())
+
+    @mock.patch('requests.post')
+    def test_search(self, mock_post):
+        response = self.client.get('/search/')
+        mock_post.assert_called_once()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.has_header('X-Total-Count'))
